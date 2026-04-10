@@ -1,6 +1,6 @@
 {
     'name': 'Sale MRP Dynamic BOM',
-    'version': '18.0.1.1.0',
+    'version': '18.0.1.1.1'
     'category': 'Manufacturing',
     'summary': 'Select raw material components per Sale Order line to drive MO creation',
     'description': """
@@ -20,7 +20,7 @@ Key features:
 - Quantity sync between SO line and MO without recreating the order
 - Edit locking based on MO state (configurable per product)
     """,
-    'author': 'Infiniarc',
+    'author': 'MOHAMED MAATI',
     'depends': [
         'sale_management',
         'mrp',
