@@ -1,6 +1,7 @@
 {
+    {
     'name': 'Sale MRP Dynamic BOM',
-    'version': '18.0.1.1.1'
+    'version': '18.0.1.1.1',
     'category': 'Manufacturing',
     'summary': 'Select raw material components per Sale Order line to drive MO creation',
     'description': """
