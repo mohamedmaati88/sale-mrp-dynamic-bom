@@ -1,5 +1,4 @@
 {
-    {
     'name': 'Sale MRP Dynamic BOM',
     'version': '18.0.1.1.1',
     'category': 'Manufacturing',
@@ -21,7 +20,7 @@ Key features:
 - Quantity sync between SO line and MO without recreating the order
 - Edit locking based on MO state (configurable per product)
     """,
-    'author': 'MOHAMED MAATI',
+    'author': 'Mohamed Maati',
     'depends': [
         'sale_management',
         'mrp',
