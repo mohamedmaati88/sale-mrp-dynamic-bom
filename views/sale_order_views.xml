@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Odoo 18: sale.view_order_form is the single SO form view covering
+        both quotation (draft/sent) and confirmed order states.
+        sale.view_quotation_form and sale.view_order_line_form / _tree
+        no longer exist as standalone records.
+    -->
+    <record id="sale_order_form_dynamic_bom" model="ir.ui.view">
+        <field name="name">sale.order.form.dynamic.bom</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Warning banners: unconfigured lines, components or price out of sync -->
+            <div name="button_box" position="before">
+                <field name="has_unconfigured_dynamic_lines" invisible="1"/>
+                <field name="unconfigured_product_names" invisible="1"/>
+                <field name="components_need_sync" invisible="1"/>
+                <field name="price_needs_sync" invisible="1"/>
+                <field name="components_sync_product_names" invisible="1"/>
+                <field name="price_sync_product_names" invisible="1"/>
+                <field name="price_adjustment_pending" invisible="1"/>
+                <field name="price_adjustment_pending_products" invisible="1"/>
+
+                <!-- Price adjustment pending — draft deleted without confirming -->
+                <div class="alert alert-info mb-0 d-flex align-items-center gap-2"
+                     role="alert"
+                     invisible="not price_adjustment_pending">
+                    <i class="fa fa-info-circle me-1"/>
+                    <span>
+                        A price adjustment invoice/credit note is pending for:
+                        <strong><field name="price_adjustment_pending_products" readonly="1" nolabel="1"/></strong>.
+                        Click <strong>Update Price</strong> on the line to regenerate the draft document.
+                    </span>
+                </div>
+
+                <!-- Unconfigured dynamic lines — blocks MO creation -->
+                <div class="alert alert-danger mb-0 d-flex align-items-center gap-2"
+                     role="alert"
+                     invisible="not has_unconfigured_dynamic_lines">
+                    <i class="fa fa-exclamation-circle me-1"/>
+                    <span>
+                        <strong>Manufacturing order not created</strong> — components not configured for:
+                        <strong><field name="unconfigured_product_names" readonly="1" nolabel="1"/></strong>.
+                        Click <strong>Configure</strong> on each line, then save again.
+                    </span>
+                </div>
+
+                <div class="alert alert-warning mb-0 d-flex align-items-center gap-2"
+                     role="alert"
+                     invisible="not components_need_sync and not price_needs_sync">
+                    <i class="fa fa-exclamation-triangle me-1"/>
+                    <span>
+                        Component selections or prices have changed for:
+                        <strong><field name="components_sync_product_names" readonly="1" nolabel="1"/></strong>.
+                        Click <strong>Update</strong> on each line to sync the manufacturing order and recalculate the unit price.
+                    </span>
+                </div>
+            </div>
+
+            <!-- Configure + Update Price + Components + Update Components per SO line -->
+            <xpath expr="//field[@name='order_line']//list" position="inside">
+                <field name="has_dynamic_components" column_invisible="1"/>
+                <field name="components_configured" column_invisible="1"/>
+                <field name="component_count" column_invisible="1"/>
+                <field name="mo_creation_pending" column_invisible="1"/>
+                <button
+                    name="action_open_component_selector"
+                    string="Configure"
+                    type="object"
+                    icon="fa-cogs"
+                    class="btn-secondary btn-sm o_dynamic_bom_configure"
+                    invisible="not has_dynamic_components"
+                    title="Select manufacturing components for this line"/>
+                <button
+                    name="action_view_components"
+                    string=""
+                    type="object"
+                    icon="fa-cubes"
+                    class="btn-secondary btn-sm"
+                    invisible="not components_configured"
+                    title="View selected components for this line"/>
+                <button
+                    name="action_update_components"
+                    string="Update"
+                    type="object"
+                    icon="fa-refresh"
+                    class="btn-secondary btn-sm"
+                    invisible="not components_configured"
+                    title="Sync the manufacturing order with the latest component selections and recalculate the unit price from component costs"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Action dropdown: Update Components &amp; Prices for all lines -->
+    <record id="action_sale_order_update_all_lines" model="ir.actions.server">
+        <field name="name">Update Components &amp; Prices</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_update_all_lines()</field>
+    </record>
+
+</odoo>

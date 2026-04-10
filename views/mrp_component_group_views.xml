@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form View -->
+    <record id="mrp_component_group_form_view" model="ir.ui.view">
+        <field name="name">mrp.component.group.form</field>
+        <field name="model">mrp.component.group</field>
+        <field name="arch" type="xml">
+            <form string="Component Group">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Group Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="selection_mode"/>
+                            <field name="is_required"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="mrp_component_group_list_view" model="ir.ui.view">
+        <field name="name">mrp.component.group.list</field>
+        <field name="model">mrp.component.group</field>
+        <field name="arch" type="xml">
+            <list string="Component Groups" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="selection_mode"/>
+                <field name="is_required"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="mrp_component_group_action" model="ir.actions.act_window">
+        <field name="name">Component Groups</field>
+        <field name="res_model">mrp.component.group</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Component Group
+            </p>
+            <p>
+                Component groups allow you to organize selectable components
+                into logical categories with specific selection rules.
+            </p>
+        </field>
+    </record>
+
+</odoo>
