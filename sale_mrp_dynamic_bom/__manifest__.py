@@ -21,7 +21,6 @@ Key features:
 - Edit locking based on MO state (configurable per product)
     """,
     'author': 'Infiniarc',
-    'website': 'https://github.com/Infiniarc99',
     'depends': [
         'sale_management',
         'mrp',
@@ -47,6 +46,9 @@ Key features:
             'sale_mrp_dynamic_bom/static/src/js/sale_order_dynamic_bom.js',
         ],
     },
+    'images': [
+        'static/description/banner.png',
+    ],
     'installable': True,
     'application': False,
     'auto_install': False,
