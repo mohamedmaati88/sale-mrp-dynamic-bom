@@ -44,6 +44,19 @@
         </field>
     </record>
 
+    <!-- Search View -->
+    <record id="mrp_component_group_search_view" model="ir.ui.view">
+        <field name="name">mrp.component.group.search</field>
+        <field name="model">mrp.component.group</field>
+        <field name="arch" type="xml">
+            <search string="Component Groups">
+                <field name="name"/>
+                <field name="code"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
     <!-- Action -->
     <record id="mrp_component_group_action" model="ir.actions.act_window">
         <field name="name">Component Groups</field>
