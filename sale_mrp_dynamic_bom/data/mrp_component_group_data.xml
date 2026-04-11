@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo noupdate="1">
+<odoo noupdate="0">
 
     <record id="mrp_component_group_raw" model="mrp.component.group">
         <field name="name">Raw Material</field>
