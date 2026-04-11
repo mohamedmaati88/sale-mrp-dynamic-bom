@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sale MRP Dynamic BOM</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; margin: 0; padding: 0; }
+        .header { background: #5C6BC0; color: #fff; padding: 40px 32px; }
+        .header h1 { margin: 0 0 8px; font-size: 28px; }
+        .header p  { margin: 0; font-size: 15px; opacity: .85; }
+        .section   { padding: 32px; border-bottom: 1px solid #eee; }
+        .section h2 { color: #5C6BC0; font-size: 20px; margin-top: 0; }
+        .features  { display: flex; flex-wrap: wrap; gap: 20px; }
+        .feature   { flex: 1 1 260px; background: #f5f6ff; border-left: 4px solid #5C6BC0;
+                     border-radius: 4px; padding: 16px 18px; }
+        .feature h3 { margin: 0 0 8px; font-size: 15px; color: #3949AB; }
+        .feature p  { margin: 0; font-size: 13px; line-height: 1.6; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 6px; font-size: 14px; line-height: 1.6; }
+        .badge { display: inline-block; background: #5C6BC0; color: #fff;
+                 padding: 2px 10px; border-radius: 12px; font-size: 12px; margin-right: 6px; }
+        .footer { background: #f9f9f9; padding: 20px 32px; font-size: 12px; color: #888; }
+    </style>
+</head>
+<body>
+
+<img src="banner.jpg" style="width:100%; border-radius:10px; margin-bottom:20px;"/>
+
+<div class="header">
+    <h1>Sale MRP Dynamic BOM</h1>
+    <p>Configure raw-material components per Sale Order line and drive Manufacturing Order creation automatically.</p>
+</div>
+
+<div class="section">
+    <h2>Overview</h2>
+    <p>
+        <strong>Sale MRP Dynamic BOM</strong> seamlessly bridges the gap between Sales and
+        Manufacturing in Odoo 18.
+    </p>
+    <p>
+        It enables your team to define configurable component options for each product, allowing
+        sales users to select the exact components required directly from the Sale Order line —
+        before or after confirmation.
+    </p>
+    <p>
+        Based on these selections, the module automatically generates a dynamic Bill of Materials
+        (BOM) and creates the corresponding Manufacturing Order, ensuring production always reflects
+        customer-specific requirements.
+    </p>
+    <p>
+        Beyond operational flexibility, the module enforces strong governance and accounting control
+        by maintaining full traceability between selected components, manufacturing consumption, and
+        financial impact. This ensures that costing, valuation, and accounting entries remain
+        accurate and aligned with actual production decisions.
+    </p>
+    <p>
+        The result is a fully synchronized workflow across Sales, Manufacturing, and Accounting —
+        reducing manual intervention, minimizing errors, strengthening control, and improving
+        overall operational efficiency.
+    </p>
+</div>
+
+<div class="section">
+    <h2>Key Features</h2>
+    <div class="features">
+
+        <div class="feature">
+            <h3>🧩 Component Groups &amp; Selection Modes</h3>
+            <p>Define component groups (e.g. Raw Material, Color, Accessories) with
+               <em>single</em> or <em>multiple</em> selection modes, mandatory flags,
+               and maximum quantity limits.</p>
+        </div>
+
+        <div class="feature">
+            <h3>🛒 Wizard-based Component Selector</h3>
+            <p>A dedicated selection wizard on each SO line lets users pick components,
+               enter quantities, and confirms incompatibility or duplicate-product rules
+               before saving.</p>
+        </div>
+
+        <div class="feature">
+            <h3>🏭 Automatic MO Creation</h3>
+            <p>On SO confirmation (or immediately after configuration on a confirmed SO),
+               a Manufacturing Order with a custom Dynamic BOM is created automatically.</p>
+        </div>
+
+        <div class="feature">
+            <h3>🔄 Price &amp; Component Sync</h3>
+            <p>Update Price / Update Components buttons keep the SO unit price, BOM lines,
+               and MO raw moves in sync. Sync warnings appear whenever selections change
+               after MO creation.</p>
+        </div>
+
+        <div class="feature">
+            <h3>📄 Invoice Adjustment Engine</h3>
+            <p>When the component price changes after a confirmed invoice, the module
+               auto-creates a draft Credit Note or Adjustment Invoice for the difference,
+               maintaining a full audit trail with component snapshots.</p>
+        </div>
+
+        <div class="feature">
+            <h3>🖨️ Dynamic Components PDF Report</h3>
+            <p>Print a detailed component list from the Sale Order, the component view,
+               or directly from the Invoice — with snapshot behavior for confirmed invoices
+               and labelled addition / removal rows for adjustment documents.</p>
+        </div>
+
+        <div class="feature">
+            <h3>🔒 Edit Locking</h3>
+            <p>Three lock modes per product: lock after MO Done, lock after MO Confirm,
+               or manual operator lock — preventing accidental component changes after
+               production starts.</p>
+        </div>
+
+        <div class="feature">
+            <h3>⛔ Incompatible Components</h3>
+            <p>Mark component pairs as incompatible. The system blocks selection of
+               conflicting components together, with automatic reciprocal enforcement
+               and a clear error message at the wizard level and BOM creation level.</p>
+        </div>
+
+    </div>
+</div>
+
+<div class="section">
+    <h2>Supported Odoo Version</h2>
+    <span class="badge">Odoo 18.0</span>
+</div>
+
+<div class="section">
+    <h2>Module Dependencies</h2>
+    <ul>
+        <li><strong>sale_management</strong> — Sale Orders</li>
+        <li><strong>mrp</strong> — Manufacturing Orders &amp; BOM</li>
+        <li><strong>stock</strong> — Inventory &amp; Stock Moves</li>
+        <li><strong>account</strong> — Invoices &amp; Credit Notes</li>
+        <li><strong>uom</strong> — Units of Measure</li>
+        <li><strong>mail</strong> — Chatter &amp; Activity Logs</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>What's New in 18.0.1.1.0</h2>
+    <ul>
+        <li>Incompatible components system with auto-reciprocal enforcement</li>
+        <li>Invoice-level Dynamic Components PDF report with snapshot behavior</li>
+        <li>Price adjustment invoice / credit note auto-creation on component update</li>
+        <li>Accumulated billed-state tracking for multi-round price adjustments</li>
+        <li>Block reset-to-draft for confirmed invoices with active Manufacturing Orders</li>
+        <li>Component quantity sync without recreating the Manufacturing Order</li>
+    </ul>
+</div>
+
+<div class="footer">
+    &copy; Infiniarc — Sale MRP Dynamic BOM for Odoo 18 — License: LGPL-3
+</div>
+
+</body>
+</html>
