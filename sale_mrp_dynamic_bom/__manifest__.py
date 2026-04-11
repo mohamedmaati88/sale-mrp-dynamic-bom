@@ -24,6 +24,7 @@ Key features:
     'depends': [
         'sale_management',
         'mrp',
+        'sale_mrp',
         'stock',
         'account',
         'uom',
