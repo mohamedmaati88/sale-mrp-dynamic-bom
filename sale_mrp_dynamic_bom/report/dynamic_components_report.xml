@@ -86,7 +86,7 @@
                                                    t-options='{"widget": "monetary", "display_currency": line.order_id.currency_id}'/>
                                             </td>
                                             <td class="text-end">
-                                                <!-- Subtotal × product qty -->
+                                                <!-- Subtotal × product qty (SO line report — always uses SO qty) -->
                                                 <t t-esc="comp.subtotal * line.product_uom_qty"
                                                    t-options='{"widget": "monetary", "display_currency": line.order_id.currency_id}'/>
                                             </td>
@@ -188,7 +188,7 @@
                                                            t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
                                                     </td>
                                                     <td class="text-end">
-                                                        <!-- Subtotal × product qty -->
+                                                        <!-- Subtotal × SO qty (SO report — always full order qty) -->
                                                         <t t-esc="comp.subtotal * line.product_uom_qty"
                                                            t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
                                                     </td>
@@ -235,10 +235,14 @@
         Rendering modes, determined by snapshot state:
         1. Draft invoice              → live SO components (always up to date)
         2. Confirmed original invoice → 'normal' snapshots (frozen at post time)
-        3. Adjustment invoice         → 'addition' snapshots (what was added)
-        4. Adjustment credit note     → 'reduction' snapshots (what was removed)
-        5. Confirmed, no snapshots    → live SO components (module installed after posting)
-        Subtotals in all modes are multiplied by the SO line product_uom_qty.
+        3. Adjustment invoice         → 'addition'/'reduction' snapshots
+        4. Confirmed, no snapshots    → live SO components (module installed after posting)
+
+        Quantity used for subtotal multiplication:
+        - Modes 1 & 2: actual invoiced qty from invoice_line_ids linked to the SO line
+                       (fallback: sol.product_uom_qty if no invoice line found)
+        - Mode 3:      actual qty from invoice_line_ids filtered by product_id
+                       (adjustment lines may not have sale_line_ids populated)
     -->
     <template id="report_invoice_dynamic_components">
         <t t-call="web.html_container">
@@ -278,6 +282,7 @@
                         <!-- ════════════════════════════════════════════════════
                              MODE 1: NO SNAPSHOTS (draft or legacy confirmed)
                              → Show live components from linked SO lines
+                             → inv_qty = actual invoiced qty from invoice line
                              ════════════════════════════════════════════════════ -->
                         <t t-if="not invoice.component_snapshot_ids">
                             <t t-set="dynamic_lines" t-value="invoice.invoice_line_ids.mapped('sale_line_ids').filtered(lambda l: l.has_dynamic_components and l.selected_component_ids)"/>
@@ -285,11 +290,13 @@
                                 <p class="text-muted">No dynamic components found for this invoice.</p>
                             </t>
                             <t t-foreach="dynamic_lines" t-as="line">
+                                <!-- Invoiced qty for this SO line; fallback to SO qty -->
+                                <t t-set="inv_qty" t-value="sum(invoice.invoice_line_ids.filtered(lambda il: line in il.sale_line_ids).mapped('quantity')) or line.product_uom_qty"/>
                                 <div class="mb-5">
                                     <h5 class="mt-3 mb-1">
                                         <t t-esc="line.product_id.display_name"/>
                                         <small class="text-muted ms-2">
-                                            (Qty: <t t-esc="line.product_uom_qty"/>
+                                            (Qty: <t t-esc="inv_qty"/>
                                             <t t-esc="line.product_uom.name"/>)
                                         </small>
                                     </h5>
@@ -328,8 +335,8 @@
                                                                t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/>
                                                         </td>
                                                         <td class="text-end">
-                                                            <!-- Subtotal × product qty -->
-                                                            <t t-esc="comp.subtotal * line.product_uom_qty"
+                                                            <!-- Subtotal × invoiced qty -->
+                                                            <t t-esc="comp.subtotal * inv_qty"
                                                                t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/>
                                                         </td>
                                                     </t>
@@ -342,7 +349,7 @@
                                                 <td colspan="5" class="text-end fw-bold">Total:</td>
                                                 <td></td>
                                                 <td class="text-end fw-bold">
-                                                    <t t-esc="sum(c.subtotal * line.product_uom_qty for c in line.selected_component_ids)"
+                                                    <t t-esc="sum(c.subtotal * inv_qty for c in line.selected_component_ids)"
                                                        t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/>
                                                 </td>
                                                 <td></td>
@@ -356,6 +363,7 @@
                         <!-- ════════════════════════════════════════════════════
                              MODE 2: CONFIRMED ORIGINAL INVOICE
                              → Show 'normal' snapshots grouped by SO line
+                             → inv_qty = actual invoiced qty from invoice line
                              ════════════════════════════════════════════════════ -->
                         <t t-elif="normal_snaps and not addition_snaps and not reduction_snaps">
                             <p class="text-muted fst-italic mb-3">
@@ -365,11 +373,13 @@
                             <t t-foreach="snap_lines" t-as="sol">
                                 <t t-set="line_snaps"  t-value="normal_snaps.filtered(lambda s: s.sale_line_id.id == sol.id)"/>
                                 <t t-set="show_price"  t-value="not sol.product_id.disable_component_price_update"/>
+                                <!-- Invoiced qty for this SO line; fallback to SO qty -->
+                                <t t-set="inv_qty" t-value="sum(invoice.invoice_line_ids.filtered(lambda il: sol in il.sale_line_ids).mapped('quantity')) or sol.product_uom_qty"/>
                                 <div class="mb-5">
                                     <h5 class="mt-3 mb-1">
                                         <t t-esc="sol.product_id.display_name or (line_snaps and line_snaps[0].product_display_name) or ''"/>
-                                        <small class="text-muted ms-2" t-if="sol.product_uom_qty">
-                                            (Qty: <t t-esc="sol.product_uom_qty"/>
+                                        <small class="text-muted ms-2" t-if="inv_qty">
+                                            (Qty: <t t-esc="inv_qty"/>
                                             <t t-esc="sol.product_uom.name"/>)
                                         </small>
                                     </h5>
@@ -400,8 +410,8 @@
                                                                t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/>
                                                         </td>
                                                         <td class="text-end">
-                                                            <!-- Subtotal × product qty -->
-                                                            <t t-esc="snap.subtotal * sol.product_uom_qty"
+                                                            <!-- Subtotal × invoiced qty -->
+                                                            <t t-esc="snap.subtotal * inv_qty"
                                                                t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/>
                                                         </td>
                                                     </t>
@@ -414,7 +424,7 @@
                                                 <td colspan="5" class="text-end fw-bold">Total:</td>
                                                 <td></td>
                                                 <td class="text-end fw-bold">
-                                                    <t t-esc="sum(s.subtotal * sol.product_uom_qty for s in line_snaps)"
+                                                    <t t-esc="sum(s.subtotal * inv_qty for s in line_snaps)"
                                                        t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/>
                                                 </td>
                                                 <td></td>
@@ -428,7 +438,8 @@
                         <!-- ════════════════════════════════════════════════════
                              MODE 3: ADJUSTMENT DOCUMENT
                              → Any combination of addition / reduction snapshots
-                             → Single table with Status column per SO line
+                             → inv_qty = qty from adjustment invoice line (by product_id)
+                               because adjustment lines may not have sale_line_ids
                              ════════════════════════════════════════════════════ -->
                         <t t-elif="addition_snaps or reduction_snaps">
                             <t t-set="adj_snaps" t-value="invoice.component_snapshot_ids.filtered(lambda s: s.snapshot_type in ('addition', 'reduction'))"/>
@@ -488,12 +499,19 @@
                             <t t-foreach="adj_sol_ids" t-as="sol">
                                 <t t-set="sol_snaps"  t-value="adj_snaps.filtered(lambda s: s.sale_line_id.id == sol.id)"/>
                                 <t t-set="show_price" t-value="not sol.product_id.disable_component_price_update"/>
+                                <!--
+                                    Adjustment invoice lines may not carry sale_line_ids,
+                                    so match by product_id. _adjust_invoices_for_price_update
+                                    sets quantity = total_qty_invoiced (e.g. 3, not 10).
+                                    Fallback to SO qty if no matching invoice line found.
+                                -->
+                                <t t-set="inv_qty" t-value="sum(invoice.invoice_line_ids.filtered(lambda il: il.product_id == sol.product_id).mapped('quantity')) or sol.product_uom_qty"/>
                                 <div class="mb-5">
-                                    <!-- Product heading + qty (MODE 3) -->
+                                    <!-- Product heading + invoiced qty (MODE 3) -->
                                     <h5 class="mt-3 mb-1">
                                         <t t-esc="sol.product_id.display_name or (sol_snaps and sol_snaps[0].product_display_name) or ''"/>
-                                        <small class="text-muted ms-2" t-if="sol.product_uom_qty">
-                                            (Qty: <t t-esc="sol.product_uom_qty"/>
+                                        <small class="text-muted ms-2" t-if="inv_qty">
+                                            (Qty: <t t-esc="inv_qty"/>
                                             <t t-esc="sol.product_uom.name"/>)
                                         </small>
                                     </h5>
@@ -533,13 +551,13 @@
                                                                t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/>
                                                         </td>
                                                         <td class="text-end">
-                                                            <!-- Subtotal × product qty — additions positive, reductions in parentheses -->
+                                                            <!-- Subtotal × invoiced qty — additions positive, reductions in parentheses -->
                                                             <t t-if="snap.snapshot_type == 'addition'">
-                                                                <t t-esc="snap.subtotal * sol.product_uom_qty"
+                                                                <t t-esc="snap.subtotal * inv_qty"
                                                                    t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/>
                                                             </t>
                                                             <t t-elif="snap.snapshot_type == 'reduction'">
-                                                                (<t t-esc="snap.subtotal * sol.product_uom_qty"
+                                                                (<t t-esc="snap.subtotal * inv_qty"
                                                                    t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/>)
                                                             </t>
                                                         </td>
@@ -553,7 +571,7 @@
                                                 <td colspan="6" class="text-end fw-bold">Net Adjustment:</td>
                                                 <td></td>
                                                 <td class="text-end fw-bold">
-                                                    <t t-esc="(sum(s.subtotal for s in sol_snaps if s.snapshot_type == 'addition') - sum(s.subtotal for s in sol_snaps if s.snapshot_type == 'reduction')) * sol.product_uom_qty"
+                                                    <t t-esc="(sum(s.subtotal for s in sol_snaps if s.snapshot_type == 'addition') - sum(s.subtotal for s in sol_snaps if s.snapshot_type == 'reduction')) * inv_qty"
                                                        t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/>
                                                 </td>
                                                 <td></td>
