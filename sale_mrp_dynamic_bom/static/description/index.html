@@ -101,8 +101,7 @@
 </head>
 <body>
 
-<!-- البانر -->
-<img src="banner.jpg" style="width:100%; border-radius:10px; margin-bottom:20px;"/>
+<img src="banner.png" style="width:100%; border-radius:10px; margin-bottom:20px;"/>
 
 <div class="header">
     <h1>Smart Dynamic BOM for Sales & Manufacturing</h1>
@@ -115,7 +114,7 @@
 <div class="section">
     <h2>Overview</h2>
     <p>
-        <strong>Smart Dynamic BOM for Sales & Manufacturing</strong> seamlessly bridges
+        <strong>Smart Dynamic BOM for Sales &amp; Manufacturing</strong> seamlessly bridges
         the gap between Sales and Manufacturing in Odoo 19.
     </p>
     <p>
@@ -131,21 +130,23 @@
     <p>
         Beyond operational flexibility, the module reinforces governance and accounting
         control by maintaining full traceability between selected components, manufacturing
-        consumption, and financial impact.
+        consumption, and financial impact. This helps ensure that costing, valuation, and
+        accounting entries remain accurate and aligned with actual production decisions.
     </p>
     <p>
         The result is a fully synchronized workflow across Sales, Manufacturing, and
-        Accounting — reducing manual intervention, minimizing errors, and improving efficiency.
+        Accounting — reducing manual intervention, minimizing errors, strengthening
+        operational control, and improving overall efficiency.
     </p>
 </div>
 
 <div class="section">
     <h2>💼 Business Use Cases</h2>
     <ul>
-        <li><strong>Furniture & Custom Manufacturing</strong> — Configure materials, colors, and accessories per order.</li>
-        <li><strong>Garments & Textiles</strong> — Select fabrics and variations dynamically.</li>
-        <li><strong>Electronics Assembly</strong> — Choose optional components directly from sales.</li>
-        <li><strong>Configure-to-Order Businesses</strong> — Build products per customer requirements.</li>
+        <li><strong>Furniture &amp; Custom Manufacturing</strong> — Configure materials, colors, and accessories per order.</li>
+        <li><strong>Garments &amp; Textiles</strong> — Select fabrics, styles, and variations dynamically for each customer request.</li>
+        <li><strong>Electronics Assembly</strong> — Choose optional components, bundles, and accessories directly from the sales flow.</li>
+        <li><strong>Configure-to-Order Businesses</strong> — Build products based on customer requirements without manual BOM preparation.</li>
     </ul>
 </div>
 
@@ -154,43 +155,70 @@
     <div class="features">
 
         <div class="feature">
-            <h3>🧩 Component Groups & Selection Modes</h3>
-            <p>Define flexible component groups with rules and restrictions.</p>
+            <h3>🧩 Component Groups &amp; Selection Modes</h3>
+            <p>
+                Define component groups such as Raw Material, Color, and Accessories
+                with single or multiple selection modes, mandatory flags, and quantity limits.
+            </p>
         </div>
 
         <div class="feature">
-            <h3>🛒 Component Selector</h3>
-            <p>Select components directly from Sale Order lines.</p>
+            <h3>🛒 Wizard-based Component Selector</h3>
+            <p>
+                A dedicated wizard on each Sale Order line allows users to select components,
+                set quantities, and validate restrictions before saving.
+            </p>
         </div>
 
         <div class="feature">
-            <h3>🏭 Auto Manufacturing</h3>
-            <p>Automatically generate Manufacturing Orders.</p>
+            <h3>🏭 Automatic MO Creation</h3>
+            <p>
+                On Sale Order confirmation — or immediately after configuration on an already
+                confirmed order — the module creates a custom Dynamic BOM and the related
+                Manufacturing Order automatically.
+            </p>
         </div>
 
         <div class="feature">
-            <h3>🔄 Sync Engine</h3>
-            <p>Keep pricing, BOM, and production aligned.</p>
+            <h3>🔄 Price &amp; Component Sync</h3>
+            <p>
+                Update Price and Update Components actions keep the Sale Order price,
+                BOM lines, and manufacturing raw moves synchronized whenever selections change.
+            </p>
         </div>
 
         <div class="feature">
-            <h3>📄 Invoice Adjustment</h3>
-            <p>Automatically adjust invoices when components change.</p>
+            <h3>📄 Invoice Adjustment Engine</h3>
+            <p>
+                When component pricing changes after invoicing, the module can generate a
+                draft Credit Note or Adjustment Invoice automatically, preserving a clear
+                audit trail and component snapshot history.
+            </p>
         </div>
 
         <div class="feature">
-            <h3>🖨️ Dynamic Report</h3>
-            <p>Generate clear component reports.</p>
+            <h3>🖨️ Dynamic Components PDF Report</h3>
+            <p>
+                Print a detailed component report from the Sale Order, component records,
+                or directly from the Invoice with clear visibility over selected items
+                and pricing impact.
+            </p>
         </div>
 
         <div class="feature">
             <h3>🔒 Edit Locking</h3>
-            <p>Control modifications after confirmation.</p>
+            <p>
+                Control post-confirmation edits using multiple locking modes such as
+                lock after MO confirmation, lock after MO completion, or manual lock control.
+            </p>
         </div>
 
         <div class="feature">
-            <h3>⛔ Validation Rules</h3>
-            <p>Prevent invalid component combinations.</p>
+            <h3>⛔ Incompatible Components</h3>
+            <p>
+                Prevent invalid component combinations by defining incompatible pairs.
+                The system blocks conflicting selections and enforces clean configuration rules.
+            </p>
         </div>
 
     </div>
@@ -200,11 +228,11 @@
     <h2>🚀 Why This Module?</h2>
     <div class="highlight-box">
         <ul>
-            <li>Eliminate manual BOM errors</li>
-            <li>Automate Manufacturing from Sales</li>
-            <li>Improve costing accuracy</li>
-            <li>Full traceability</li>
-            <li>Support configurable products</li>
+            <li>Eliminates manual BOM preparation and related errors</li>
+            <li>Automates Manufacturing directly from Sales Orders</li>
+            <li>Improves pricing, costing, and accounting accuracy</li>
+            <li>Maintains full traceability across Sales, Production, and Finance</li>
+            <li>Supports configurable and customer-specific manufacturing workflows</li>
         </ul>
     </div>
 </div>
@@ -215,36 +243,40 @@
 </div>
 
 <div class="section">
-    <h2>Dependencies</h2>
+    <h2>Module Dependencies</h2>
     <ul>
-        <li>sale_management</li>
-        <li>mrp</li>
-        <li>stock</li>
-        <li>account</li>
-        <li>uom</li>
-        <li>mail</li>
+        <li><strong>sale_management</strong> — Sale Orders</li>
+        <li><strong>mrp</strong> — Manufacturing Orders &amp; Bills of Materials</li>
+        <li><strong>stock</strong> — Inventory &amp; Stock Moves</li>
+        <li><strong>account</strong> — Invoices, Credit Notes, and Financial Adjustments</li>
+        <li><strong>uom</strong> — Units of Measure</li>
+        <li><strong>mail</strong> — Chatter &amp; Activity Logs</li>
     </ul>
 </div>
 
 <div class="section">
-    <h2>What's New</h2>
+    <h2>What's New in 19.0.1.0.0</h2>
     <ul>
-        <li>Odoo 19 compatibility</li>
-        <li>Improved synchronization</li>
-        <li>Better validation rules</li>
-        <li>Enhanced performance</li>
+        <li>Improved compatibility for Odoo 19</li>
+        <li>Incompatible components system with reciprocal validation</li>
+        <li>Invoice-level Dynamic Components PDF reporting</li>
+        <li>Automatic price adjustment invoice / credit note handling</li>
+        <li>Improved synchronization between component changes and manufacturing data</li>
+        <li>Enhanced control over post-confirmation edits and operational locking</li>
     </ul>
 </div>
 
 <div class="section">
-    <h2>💡 Transform Your Workflow</h2>
+    <h2>💡 Transform Your Sales &amp; Manufacturing Workflow</h2>
     <p>
-        Move from manual BOM handling to a smart, automated workflow driven directly by sales.
+        Stop managing Bills of Materials manually. Start building smarter, faster, and more
+        accurate manufacturing processes directly from your sales orders — with the control,
+        flexibility, and traceability modern businesses need.
     </p>
 </div>
 
 <div class="footer">
-    &copy; Smart Dynamic BOM for Sales & Manufacturing — Odoo 19
+    &copy; Smart Dynamic BOM for Sales &amp; Manufacturing for Odoo 19 — License: LGPL-3
 </div>
 
 </body>
