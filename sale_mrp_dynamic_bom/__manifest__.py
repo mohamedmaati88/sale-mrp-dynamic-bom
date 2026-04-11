@@ -47,7 +47,7 @@ Key features:
         ],
     },
     'images': [
-        'static/description/banner.png',
+        'static/description/banner.jpg',
     ],
     'installable': True,
     'application': False,
