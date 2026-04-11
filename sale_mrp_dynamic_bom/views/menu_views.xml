@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Manufacturing > Configuration > Component Groups -->
+    <menuitem
+        id="menu_mrp_component_group"
+        name="Component Groups"
+        parent="mrp.menu_mrp_configuration"
+        action="mrp_component_group_action"
+        sequence="20"
+    />
+
+</odoo>
