@@ -1,11 +1,11 @@
 {
-    'name': 'Sale MRP Dynamic BOM',
+    'name': 'Smart Dynamic BOM for Sales & Manufacturing',
     'version': '19.0.1.0.0',
     'category': 'Manufacturing',
     'summary': 'Select raw material components per Sale Order line to drive MO creation',
     'description': """
-Sale MRP Dynamic BOM
-====================
+Smart Dynamic BOM for Sales & Manufacturing
+==========================================
 
 Allows configuring raw material components per Sale Order line from a
 pre-defined list of selectable components on the product.
