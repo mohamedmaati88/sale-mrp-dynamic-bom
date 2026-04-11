@@ -49,6 +49,7 @@ Key features:
     'images': [
         'static/description/banner.jpg',
     ],
+    'pre_init_hook': 'pre_init_hook',
     'installable': True,
     'application': False,
     'auto_install': False,
