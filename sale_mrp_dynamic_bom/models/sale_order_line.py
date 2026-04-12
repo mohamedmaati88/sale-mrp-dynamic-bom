@@ -1048,6 +1048,7 @@ class SaleOrderLine(models.Model):
                     self.product_id.property_account_income_id
                     or self.product_id.categ_id.property_account_income_categ_id
                 ).id,
+                'product_id': self.product_id.id,
                 'name': 'update components (%s)' % self.product_id.display_name,
                 'quantity': total_qty,
                 'price_unit': abs(diff),
