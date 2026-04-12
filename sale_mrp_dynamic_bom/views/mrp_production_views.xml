@@ -12,6 +12,15 @@
                 <field name="so_components_need_sync" invisible="1"/>
                 <field name="so_price_needs_sync" invisible="1"/>
                 <field name="show_manual_lock" invisible="1"/>
+                <field name="source_so_cancelled" invisible="1"/>
+
+                <!-- Source SO cancelled warning banner -->
+                <div class="alert alert-danger mb-0 d-flex align-items-center gap-2"
+                     role="alert"
+                     invisible="not source_so_cancelled">
+                    <i class="fa fa-exclamation-circle me-1"/>
+                    <strong>Source Sale Order Cancelled</strong>
+                </div>
 
                 <!-- Manual lock toggle — visible only in manual lock mode -->
                 <div class="alert alert-info mb-0 d-flex align-items-center gap-2"

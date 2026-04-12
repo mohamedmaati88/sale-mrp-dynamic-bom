@@ -37,6 +37,13 @@ class MrpProduction(models.Model):
              'for this manufacturing order. Only applies when the product uses '
              '"Manual Lock by Operator" mode.',
     )
+    source_so_cancelled = fields.Boolean(
+        string='Source Sale Order Cancelled',
+        default=False,
+        copy=False,
+        help='Set to True when the originating Sale Order is cancelled while '
+             'this MO is still confirmed.',
+    )
     show_manual_lock = fields.Boolean(
         string='Show Manual Lock',
         compute='_compute_show_manual_lock',

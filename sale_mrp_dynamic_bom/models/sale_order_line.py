@@ -435,42 +435,70 @@ class SaleOrder(models.Model):
             if not dynamic_mos:
                 continue
 
-            cancellable = dynamic_mos.filtered(
-                lambda p: p.state in ('draft', 'confirmed')
+            # draft → cancel automatically
+            auto_cancel = dynamic_mos.filtered(
+                lambda p: p.state == 'draft'
             )
+            # confirmed → post warning banner only (do NOT cancel)
+            confirmed_warn = dynamic_mos.filtered(
+                lambda p: p.state == 'confirmed'
+            )
+            # in-progress / done → skip, warn
             skipped = dynamic_mos.filtered(
                 lambda p: p.state in ('progress', 'to_close', 'done')
             )
 
-            if cancellable:
-                cancellable.sudo().action_cancel()
-                for mo in cancellable:
+            if auto_cancel:
+                auto_cancel.sudo().action_cancel()
+                # Remove any auto-created stock exception activities on the MO
+                auto_cancel.sudo().activity_ids.unlink()
+
+            if confirmed_warn:
+                confirmed_warn.sudo().write({'source_so_cancelled': True})
+                # Remove any auto-created stock exception activities on the MO
+                confirmed_warn.sudo().activity_ids.unlink()
+                cancelled_by = self.env.user.name
+                for mo in confirmed_warn:
                     mo.message_post(
-                        body='🚫 <b>Manufacturing Order cancelled</b> automatically '
-                             'because Sale Order <b>%s</b> was cancelled.' % order.name
+                        body=Markup(
+                            'Source Sale Order <b>%s</b> has been cancelled by <b>%s</b>.'
+                        ) % (order.name, cancelled_by)
                     )
 
             if skipped:
-                warning_body = (
+                warning_body = Markup(
                     '<b>⚠️ Sale Order Cancelled — the following Manufacturing Orders '
                     'could not be cancelled automatically because work has already '
                     'started or the order is closed. Please review them manually:</b>'
                     '<ul>%s</ul>'
-                ) % ''.join(
-                    '<li><a href="/odoo/manufacturing/%d">%s</a> — %s</li>'
+                ) % Markup('').join(
+                    Markup('<li><a href="/odoo/manufacturing/%d">%s</a> — %s</li>')
                     % (mo.id, mo.name, mo.state)
                     for mo in skipped
                 )
                 order.message_post(body=warning_body)
                 for mo in skipped:
                     mo.message_post(
-                        body='⚠️ <b>Sale Order <a href="/odoo/sales/%d">%s</a> was '
-                             'cancelled</b> but this Manufacturing Order could not be '
-                             'cancelled automatically (current state: <b>%s</b>). '
-                             'Please review manually.' % (order.id, order.name, mo.state)
+                        body=Markup(
+                            '⚠️ <b>Sale Order <a href="/odoo/sales/%d">%s</a> was '
+                            'cancelled</b> but this Manufacturing Order could not be '
+                            'cancelled automatically (current state: <b>%s</b>). '
+                            'Please review manually.'
+                        ) % (order.id, order.name, mo.state)
                     )
 
-        return super().action_cancel()
+        result = super().action_cancel()
+
+        # Remove any exception/warning activities auto-created by stock
+        # on the cancelled orders (e.g. "Exception on backorder" activities)
+        self.activity_ids.filtered(
+            lambda a: a.activity_type_id.category in ('warning', 'upload_file')
+            or a.activity_type_id.name in ('Upload Document', 'Warning')
+        ).unlink()
+        # Broader: unlink ALL pending activities on the now-cancelled SO
+        self.activity_ids.unlink()
+
+        return result
 
     def action_confirm(self):
         # 1. Validate before confirming
