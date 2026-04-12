@@ -41,6 +41,17 @@ class MrpProduction(models.Model):
         string='Show Manual Lock',
         compute='_compute_show_manual_lock',
     )
+    source_sale_order_cancelled = fields.Boolean(
+        string='Source Sale Order Cancelled',
+        default=False,
+        copy=False,
+        help='Set to True when the originating Sale Order was cancelled '
+             'while this MO was already confirmed.',
+    )
+    source_sale_order_name = fields.Char(
+        string='Cancelled Source Sale Order',
+        copy=False,
+    )
 
     @api.depends('is_dynamic_bom', 'dynamic_sale_line_id',
                  'dynamic_sale_line_id.product_id.component_lock_mode')

@@ -12,6 +12,19 @@
                 <field name="so_components_need_sync" invisible="1"/>
                 <field name="so_price_needs_sync" invisible="1"/>
                 <field name="show_manual_lock" invisible="1"/>
+                <field name="source_sale_order_cancelled" invisible="1"/>
+                <field name="source_sale_order_name" invisible="1"/>
+
+                <!-- Warning: source sale order was cancelled while MO was confirmed -->
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="not source_sale_order_cancelled">
+                    <i class="fa fa-exclamation-circle me-1"/>
+                    <strong>⚠️ تنبيه / Warning:</strong>
+                    تم إلغاء أمر البيع المصدر لهذا الأمر /
+                    The source Sale Order
+                    <strong><t t-esc="source_sale_order_name"/></strong>
+                    has been cancelled. Please review this Manufacturing Order manually.
+                </div>
 
                 <!-- Manual lock toggle — visible only in manual lock mode -->
                 <div class="alert alert-info mb-0 d-flex align-items-center gap-2"

@@ -421,7 +421,8 @@ class SaleOrder(models.Model):
                 for mo in cancellable:
                     mo.message_post(
                         body='🚫 <b>Manufacturing Order cancelled</b> automatically '
-                             'because Sale Order <b>%s</b> was cancelled.' % order.name
+                             'because Sale Order <b>%s</b> was cancelled by <b>%s</b>.'
+                             % (order.name, self.env.user.name)
                     )
 
             if skipped:
@@ -436,12 +437,19 @@ class SaleOrder(models.Model):
                     for mo in skipped
                 )
                 order.message_post(body=warning_body)
+                cancelled_by = self.env.user.name
                 for mo in skipped:
+                    mo.sudo().write({
+                        'source_sale_order_cancelled': True,
+                        'source_sale_order_name': order.name,
+                    })
                     mo.message_post(
-                        body='⚠️ <b>Sale Order <a href="/odoo/sales/%d">%s</a> was '
-                             'cancelled</b> but this Manufacturing Order could not be '
+                        body='⚠️ <b>تم إلغاء أمر البيع المصدر / Source Sale Order '
+                             '<a href="/odoo/sales/%d">%s</a> was cancelled</b> '
+                             'by <b>%s</b>. This Manufacturing Order could not be '
                              'cancelled automatically (current state: <b>%s</b>). '
-                             'Please review manually.' % (order.id, order.name, mo.state)
+                             'Please review manually.'
+                             % (order.id, order.name, cancelled_by, mo.state)
                     )
 
         return super().action_cancel()
