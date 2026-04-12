@@ -22,7 +22,7 @@
                     <strong>⚠️ تنبيه / Warning:</strong>
                     تم إلغاء أمر البيع المصدر لهذا الأمر /
                     The source Sale Order
-                    <strong><t t-esc="source_sale_order_name"/></strong>
+                    <strong><field name="source_sale_order_name" readonly="1" nolabel="1"/></strong>
                     has been cancelled. Please review this Manufacturing Order manually.
                 </div>
 

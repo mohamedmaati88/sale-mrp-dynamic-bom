@@ -410,10 +410,10 @@ class SaleOrder(models.Model):
                 continue
 
             cancellable = dynamic_mos.filtered(
-                lambda p: p.state in ('draft', 'confirmed')
+                lambda p: p.state == 'draft'
             )
             skipped = dynamic_mos.filtered(
-                lambda p: p.state in ('progress', 'to_close', 'done')
+                lambda p: p.state in ('confirmed', 'progress', 'to_close', 'done')
             )
 
             if cancellable:
@@ -428,8 +428,8 @@ class SaleOrder(models.Model):
             if skipped:
                 warning_body = (
                     '<b>⚠️ Sale Order Cancelled — the following Manufacturing Orders '
-                    'could not be cancelled automatically because work has already '
-                    'started or the order is closed. Please review them manually:</b>'
+                    'could not be cancelled automatically (already confirmed or in progress). '
+                    'Please review them manually:</b>'
                     '<ul>%s</ul>'
                 ) % ''.join(
                     '<li><a href="/odoo/manufacturing/%d">%s</a> — %s</li>'
