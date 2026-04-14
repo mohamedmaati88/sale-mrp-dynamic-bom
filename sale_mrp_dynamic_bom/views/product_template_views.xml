@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_template_form_view_dynamic_bom" model="ir.ui.view">
+        <field name="name">product.template.form.dynamic.bom</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+
+
+            <!-- Selectable Components tab — only visible when enabled -->
+            <notebook position="inside">
+                <page string="Selectable Components"
+                      name="selectable_components">
+                    <group>
+                        <field name="enable_dynamic_bom"/>
+                        <field name="component_lock_mode"
+                               invisible="not enable_dynamic_bom"/>
+                        <field name="pricing_mode"
+                               invisible="not enable_dynamic_bom"/>
+                        <field name="margin_type"
+                               invisible="not enable_dynamic_bom or pricing_mode != 'components_cost'"/>
+                        <field name="default_margin"
+                               string="Default Margin"
+                               invisible="not enable_dynamic_bom or pricing_mode != 'components_cost'"/>
+                    </group>
+                    <div invisible="not enable_dynamic_bom">
+                        <field name="selectable_component_ids" mode="list">
+                            <list editable="bottom" string="Selectable Components">
+                                <field name="sequence" widget="handle"/>
+                                <field name="component_product_id" required="1"/>
+                                <field name="group_id" required="1"/>
+                                <field name="qty_default"/>
+                                <field name="allowed_uom_ids" column_invisible="1"/>
+                                <field name="uom_id"
+                                       groups="uom.group_uom"
+                                       domain="[('id', 'in', allowed_uom_ids)]"
+                                       options="{'no_create': True, 'no_quick_create': True}"/>
+                                <field name="packaging_qty"
+                                       string="Units/Package"
+                                       optional="show"/>
+                                <field name="margin"
+                                       string="Margin"
+                                       column_invisible="parent.pricing_mode != 'components_cost'"/>
+                                <field name="is_mandatory"/>
+                                <field name="enable_max_qty"/>
+                                <field name="max_qty"
+                                       invisible="not enable_max_qty"
+                                       required="enable_max_qty"
+                                       string="Max Qty"/>
+                                <field name="incompatible_component_ids"
+                                       widget="many2many_tags"
+                                       string="Incompatible With"
+                                       domain="[('product_tmpl_id', '=', parent.id), ('id', '!=', id)]"
+                                       options="{'no_create': True, 'no_quick_create': True, 'no_open': True}"
+                                       optional="show"/>
+                                <field name="notes"/>
+                            </list>
+                        </field>
+                    </div>
+                </page>
+            </notebook>
+
+        </field>
+    </record>
+
+
+    <!-- ── Image column for selectable components list (inherited) ────────── -->
+    <record id="product_template_selectable_components_image" model="ir.ui.view">
+        <field name="name">product.template.selectable.components.image</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product_template_form_view_dynamic_bom"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='selectable_component_ids']//list//field[@name='component_product_id']"
+                   position="before">
+                <field name="component_image" widget="image"
+                       options="{'size': [96, 96]}"
+                       class="o_component_image"
+                       readonly="1" string=""/>
+                <field name="component_image_full" widget="image"
+                       class="o_component_image_full"
+                       column_invisible="1"
+                       readonly="1" string=""/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

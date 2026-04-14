@@ -1,0 +1,6 @@
+/* Component selector wizard — product image column */
+.o_field_widget.o_field_image.o_component_image img {
+    width:  96px !important;
+    height: 96px !important;
+    object-fit: contain;
+}
